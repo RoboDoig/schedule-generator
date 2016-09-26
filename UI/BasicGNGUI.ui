@@ -14,33 +14,39 @@
    <string>Form</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="1">
+    <widget class="QLineEdit" name="offsetEdit"/>
+   </item>
    <item row="2" column="0">
-    <widget class="QLineEdit" name="lineEdit">
+    <widget class="QLineEdit" name="nTrialsEdit">
      <property name="text">
       <string>1000</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
-    <widget class="QLineEdit" name="lineEdit_2">
+   <item row="3" column="1">
+    <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>0.5</string>
+      <string>Trial Offset</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Trial Onset</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="QLabel" name="label_2">
+    <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>S+ / S- Balance</string>
+      <string>Trial Length</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Number of Trials</string>
-     </property>
-    </widget>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="trialLengthEdit"/>
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
@@ -53,6 +59,16 @@
       <string>Basic Go / No-Go</string>
      </property>
     </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Number of Trials</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLineEdit" name="onsetEdit"/>
    </item>
   </layout>
  </widget>

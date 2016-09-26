@@ -5,7 +5,7 @@ from PyQt5 import QtWidgets
 from Designs import mainDesign
 from Models import Widgets
 
-from Models import ScheduleWidgets
+from Models import ScheduleWidgets, ScheduleView
 
 
 class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
@@ -14,10 +14,12 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         self.setupUi(self)
 
         self.current_schedule_type = None
+        self.schedule = dict()
+        self.schedule_headers = []
 
         # add the reward map
-        self.reward_map = Widgets.ValveMapWidget(self.valveMapContents)
-        self.valveMapContents.layout().addWidget(self.reward_map)
+        self.valence_map = Widgets.ValveMapWidget(self.valveMapContents)
+        self.valveMapContents.layout().addWidget(self.valence_map)
 
         # populate schedule types
         self.schedule_types = dict()
@@ -32,15 +34,21 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         self.scheduleTypesCombo.activated.connect(self.select_schedule_type)
 
     def generate(self):
-        self.reward_map.get_valence_map()
+        # get the schedule data and headers
+        self.schedule, self.schedule_headers = self.current_schedule_type.generate_schedule(self.valence_map.get_valence_map())
+
+        # post to the schedule view
+        self.schedule_model = ScheduleView.ScheduleModel(self.schedule_headers, self.schedule, parent=self)
+        self.scheduleView.setModel(self.schedule_model)
 
     def select_schedule_type(self):
         schedule_name = self.scheduleTypesCombo.currentText()
+
         if self.current_schedule_type is not None:
             self.scheduleParamsContents.layout().removeWidget(self.current_schedule_type)
+
         self.current_schedule_type = self.schedule_types[schedule_name]()
         self.scheduleParamsContents.layout().addWidget(self.current_schedule_type)
-
 
 
 # Back up the reference to the exceptionhook

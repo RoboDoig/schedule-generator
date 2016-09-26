@@ -17,6 +17,3 @@ def reward_sequence(n_trials):
             sequence[t] = np.random.randint(0, 2)
 
     return sequence
-
-
-print(reward_sequence(50))
