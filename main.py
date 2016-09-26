@@ -1,8 +1,11 @@
 import sys
+import inspect
 
 from PyQt5 import QtWidgets
 from Designs import mainDesign
 from Models import Widgets
+
+from Models import ScheduleWidgets
 
 
 class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
@@ -11,7 +14,30 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         self.setupUi(self)
 
         # add the reward map
-        self.valveMapContents.layout().addWidget(Widgets.ValveMapWidget(self.valveMapContents))
+        self.reward_map = Widgets.ValveMapWidget(self.valveMapContents)
+        self.valveMapContents.layout().addWidget(self.reward_map)
+
+        # populate schedule types
+        self.schedule_types = dict()
+        for name, obj in inspect.getmembers(ScheduleWidgets):
+            if inspect.isclass(obj):
+                self.scheduleTypesCombo.addItem(name)
+                self.schedule_types[name] = obj
+
+        # add function bindings
+        self.generateScheduleButton.clicked.connect(self.generate)
+
+        self.scheduleTypesCombo.activated.connect(self.select_schedule_type)
+
+    def generate(self):
+        self.reward_map.get_valence_map()
+
+    def select_schedule_type(self):
+        schedule_name = self.scheduleTypesCombo.currentText()
+        print(self.schedule_types[schedule_name])
+        self.scheduleParamsContents.layout().addWidget(self.schedule_types[schedule_name]())
+
+
 
 # Back up the reference to the exceptionhook
 sys._excepthook = sys.excepthook

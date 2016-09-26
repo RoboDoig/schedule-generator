@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="2" column="0" rowspan="3">
-     <widget class="QScrollArea" name="scrollArea_2">
+     <widget class="QScrollArea" name="scheduleParamsScrollArea">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -32,7 +32,7 @@
       <property name="widgetResizable">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents_2">
+      <widget class="QWidget" name="scheduleParamsContents">
        <property name="geometry">
         <rect>
          <x>0</x>
@@ -41,6 +41,7 @@
          <height>519</height>
         </rect>
        </property>
+       <layout class="QGridLayout" name="gridLayout_2"/>
       </widget>
      </widget>
     </item>
@@ -75,25 +76,20 @@
      </widget>
     </item>
     <item row="5" column="0">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="generateScheduleButton">
       <property name="text">
        <string>Generate</string>
       </property>
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QComboBox" name="comboBox">
+     <widget class="QComboBox" name="scheduleTypesCombo">
       <property name="minimumSize">
        <size>
         <width>150</width>
         <height>0</height>
        </size>
       </property>
-      <item>
-       <property name="text">
-        <string>Select Schedule Type...</string>
-       </property>
-      </item>
      </widget>
     </item>
     <item row="0" column="1" rowspan="3">

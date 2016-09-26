@@ -14,3 +14,10 @@ class ValveMapWidget(QtWidgets.QWidget, valveMapDesign.Ui_Form):
 
     def change_valve_map(self):
         self.valveValenceTable.setColumnCount(int(self.valveNumberSelect.value()))
+
+    def get_valence_map(self):
+        map = []
+        for i in range(self.valveValenceTable.columnCount()):
+            map.append(int(self.valveValenceTable.item(0, i).text()))
+
+        return map
