@@ -12,6 +12,8 @@ class BasicGNGWidget(QtWidgets.QWidget, basicGNGDesign.Ui_Form):
 
         self.parentUi = parentUi
 
+        self.valence_map = None
+
     def generate_schedule(self, valence_map):
         # how many valves available
         n_valves = len(valence_map)
@@ -27,10 +29,39 @@ class BasicGNGWidget(QtWidgets.QWidget, basicGNGDesign.Ui_Form):
         schedule = []
         for t in range(n_trials):
             valve_choices = valve_index[reward_sequence[t]]
-            valve = np.random.choice(valve_choices)
-            schedule.append([reward_sequence[t], valve])
+            valve = np.random.choice(valve_choices) + 1
+            schedule.append([reward_sequence[t], valve, valence_map])
 
-        return schedule, ['reward_sequence', 'valve']
+        return schedule, ['reward_sequence', 'valve', 'valence_map']
 
+    def pulse_parameters(self, trial):
+        params = list()
+        valence_map = trial[2]
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+
+        for p in range(len(valence_map)):
+
+            param = {'type': 'Simple',
+                     'fromDuty': False,
+                     'fromValues': True,
+                     'pulse_width': length,
+                     'pulse_delay': 0.0,
+                     'fromLength': False,
+                     'fromRepeats': True,
+                     'repeats': 1,
+                     'isClean': True,
+                     'isShatter': False,
+                     'onset': onset,
+                     'offset': offset}
+
+            if p != trial[1]-1:
+                param['repeats'] = 0
+
+            params.append(param)
+
+        return params
 
 

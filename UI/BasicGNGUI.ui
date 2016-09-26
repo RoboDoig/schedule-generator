@@ -15,7 +15,11 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="4" column="1">
-    <widget class="QLineEdit" name="offsetEdit"/>
+    <widget class="QLineEdit" name="offsetEdit">
+     <property name="text">
+      <string>0.1</string>
+     </property>
+    </widget>
    </item>
    <item row="2" column="0">
     <widget class="QLineEdit" name="nTrialsEdit">
@@ -27,26 +31,30 @@
    <item row="3" column="1">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Trial Offset</string>
+      <string>Trial Offset (s)</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Trial Onset</string>
+      <string>Trial Onset (s)</string>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Trial Length</string>
+      <string>Trial Length (s)</string>
      </property>
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QLineEdit" name="trialLengthEdit"/>
+    <widget class="QLineEdit" name="trialLengthEdit">
+     <property name="text">
+      <string>2.0</string>
+     </property>
+    </widget>
    </item>
    <item row="0" column="0" colspan="2">
     <widget class="QLabel" name="label_3">
@@ -68,7 +76,11 @@
     </widget>
    </item>
    <item row="4" column="0">
-    <widget class="QLineEdit" name="onsetEdit"/>
+    <widget class="QLineEdit" name="onsetEdit">
+     <property name="text">
+      <string>0.1</string>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

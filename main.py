@@ -1,11 +1,14 @@
 import sys
 import inspect
+import numpy as np
 
 from PyQt5 import QtWidgets
 from Designs import mainDesign
 from Models import Widgets
 
 from Models import ScheduleWidgets, ScheduleView
+from UI import ColorMap
+import PulseInterface
 
 
 class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
@@ -28,10 +31,15 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
                 self.scheduleTypesCombo.addItem(name)
                 self.schedule_types[name] = obj
 
+        # initialise schedule model
+        self.scheduleView.setModel(ScheduleView.ScheduleModel([], [[]]))
+
         # add function bindings
         self.generateScheduleButton.clicked.connect(self.generate)
 
         self.scheduleTypesCombo.activated.connect(self.select_schedule_type)
+
+        self.scheduleView.selectionModel().selectionChanged.connect(self.draw_pulse)
 
     def generate(self):
         # get the schedule data and headers
@@ -40,6 +48,7 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         # post to the schedule view
         self.schedule_model = ScheduleView.ScheduleModel(self.schedule_headers, self.schedule, parent=self)
         self.scheduleView.setModel(self.schedule_model)
+        self.scheduleView.selectionModel().selectionChanged.connect(self.draw_pulse)
 
     def select_schedule_type(self):
         schedule_name = self.scheduleTypesCombo.currentText()
@@ -50,6 +59,16 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         self.current_schedule_type = self.schedule_types[schedule_name]()
         self.scheduleParamsContents.layout().addWidget(self.current_schedule_type)
 
+    def draw_pulse(self):
+        trial = self.schedule[self.scheduleView.selectionModel().selectedRows()[0].row()]
+        params = self.current_schedule_type.pulse_parameters(trial)
+
+        pulses, t = PulseInterface.make_pulse(20000.0, 0.0, 0.0, params)
+
+        self.pulseView.plotItem.clear()
+        for p, pulse in enumerate(pulses):
+            color = ColorMap.c_list[self.valence_map.get_valence_map()[p]]
+            self.pulseView.plotItem.plot(t, np.array(pulse) - (p*1.1), pen=color)
 
 # Back up the reference to the exceptionhook
 sys._excepthook = sys.excepthook

@@ -58,10 +58,12 @@ class Ui_MainWindow(object):
         self.scheduleView = QtWidgets.QTableView(self.centralwidget)
         self.scheduleView.setSizeAdjustPolicy(QtWidgets.QAbstractScrollArea.AdjustIgnored)
         self.scheduleView.setAlternatingRowColors(True)
+        self.scheduleView.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
+        self.scheduleView.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
         self.scheduleView.setObjectName("scheduleView")
         self.scheduleView.horizontalHeader().setCascadingSectionResizes(True)
         self.gridLayout.addWidget(self.scheduleView, 0, 1, 3, 1)
-        self.pulseView = QtWidgets.QGraphicsView(self.centralwidget)
+        self.pulseView = PlotWidget(self.centralwidget)
         self.pulseView.setObjectName("pulseView")
         self.gridLayout.addWidget(self.pulseView, 3, 1, 3, 1)
         MainWindow.setCentralWidget(self.centralwidget)
@@ -81,3 +83,4 @@ class Ui_MainWindow(object):
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.generateScheduleButton.setText(_translate("MainWindow", "Generate"))
 
+from pyqtgraph import PlotWidget
