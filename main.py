@@ -13,6 +13,8 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         super(self.__class__, self).__init__()
         self.setupUi(self)
 
+        self.current_schedule_type = None
+
         # add the reward map
         self.reward_map = Widgets.ValveMapWidget(self.valveMapContents)
         self.valveMapContents.layout().addWidget(self.reward_map)
@@ -34,8 +36,10 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
 
     def select_schedule_type(self):
         schedule_name = self.scheduleTypesCombo.currentText()
-        print(self.schedule_types[schedule_name])
-        self.scheduleParamsContents.layout().addWidget(self.schedule_types[schedule_name]())
+        if self.current_schedule_type is not None:
+            self.scheduleParamsContents.layout().removeWidget(self.current_schedule_type)
+        self.current_schedule_type = self.schedule_types[schedule_name]()
+        self.scheduleParamsContents.layout().addWidget(self.current_schedule_type)
 
 
 
