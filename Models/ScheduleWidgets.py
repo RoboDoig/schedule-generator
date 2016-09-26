@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 import numpy as np
 
-from Designs import basicGNGDesign
+from Designs import basicGNGDesign, v8CorrDesign
 from Generation import Gen
 
 
@@ -65,3 +65,13 @@ class BasicGNGWidget(QtWidgets.QWidget, basicGNGDesign.Ui_Form):
         return params
 
 
+class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
+    def __init__(self, parentUi=None):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+
+        self.parentUi = parentUi
+
+        self.valence_map = None
+
+    
