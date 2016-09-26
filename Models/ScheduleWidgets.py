@@ -9,3 +9,7 @@ class BasicGNGWidget(QtWidgets.QWidget, basicGNGDesign.Ui_Form):
         self.setupUi(self)
 
         self.parentUi = parentUi
+
+    def generate_schedule(self):
+        # generate the reward sequence
+        print('not implemented')
