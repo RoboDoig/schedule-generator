@@ -47,7 +47,6 @@ class BasicGNGWidget(QtWidgets.QWidget, basicGNGDesign.Ui_Form):
         length = float(self.trialLengthEdit.text())
 
         for p in range(len(valence_map)):
-
             param = {'type': 'Simple',
                      'fromDuty': False,
                      'fromValues': True,
@@ -130,16 +129,66 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
 
             # choose relative contributions based on whether trial is correlated or not
             o1_contribution = np.round(np.random.dirichlet(np.ones(len(o1_valves))) / 4.0, 2)
-            o2_contribution = np.round(np.random.dirichlet(np.ones(len(o1_valves))) / 4.0, 2)
+            o2_contribution = np.round(np.random.dirichlet(np.ones(len(o2_valves))) / 4.0, 2)
 
             if correlated:
-                b_contribution = np.round(np.random.dirichlet(np.ones(len(b_valves))) / 4.0, 2)
+                b_contribution = np.round(np.random.dirichlet(np.ones(len(b_valves))) / 2.0, 2)
             else:
                 b_contribution = [0.5 - sum(o1_contribution), 0.5 - sum(o2_contribution)]
 
             schedule.append([reward_sequence[t], correlated, b_valves, b_contribution, o1_valves, o1_contribution,
-                             o2_valves, o2_contribution, onset, offset, length, valence_map])
+                             o2_valves, o2_contribution, pulse_hz, length, valence_map])
 
         return schedule, ['Rewarded', 'Correlated', 'Blank Vales', 'Blank Contribution', 'Odour 1 Valves',
-                          'Odour 1 Contribution', 'Odour 2 Valves', 'Odour 2 Contribution', 'Onset', 'Offset', 'Length',
+                          'Odour 1 Contribution', 'Odour 2 Valves', 'Odour 2 Contribution', 'Hz', 'Length',
                           'Valence Map']
+
+    def pulse_parameters(self, trial):
+        valence_map = trial[10]
+        params = list()
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+        shatter_frequency = float(self.shatterFrequencyEdit.text())
+
+        compiled_valves = [item for sublist in [trial[2], trial[4], trial[6]] for item in sublist]
+        compiled_contributions = [np.round(item, 2) for sublist in [trial[3], trial[5], trial[7]] for item in sublist]
+
+        for p in range(len(valence_map)):
+            param = {'type': 'Simple',
+                     'fromDuty': True,
+                     'fromValues': False,
+                     'frequency': trial[8],
+                     'duty': 0.5,
+                     'fromLength': True,
+                     'fromRepeats': False,
+                     'length': 0.0,
+                     'isClean': False,
+                     'isShatter': True,
+                     'shatter_frequency': shatter_frequency,
+                     'shatter_duty': 0.5,
+                     'onset': onset,
+                     'offset': offset}
+
+            # place odour 1
+            if p + 1 in trial[4]:
+                param['length'] = length
+
+            # place odour 2
+            if p + 1 in trial[6]:
+                param['length'] = length
+                if not trial[1]:
+                    param['onset'] = onset + ((1.0 / trial[8])/2.0)
+
+            # place blanks
+            if p + 1 in trial[2]:
+                param['length'] = length
+                if trial[1]:
+                    param['onset'] = onset + ((1.0 / trial[8])/2.0)
+                else:
+                    param['onset'] = onset + (np.where(trial[2] == p + 1)[0][0] * ((1.0 / trial[8]) / 2.0))
+
+            params.append(param)
+
+        return params
