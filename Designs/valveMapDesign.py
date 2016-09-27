@@ -81,7 +81,7 @@ class Ui_Form(object):
         item = self.valveValenceTable.item(0, 2)
         item.setText(_translate("Form", "0"))
         item = self.valveValenceTable.item(0, 3)
-        item.setText(_translate("Form", "101"))
+        item.setText(_translate("Form", "3"))
         item = self.valveValenceTable.item(0, 4)
         item.setText(_translate("Form", "2"))
         item = self.valveValenceTable.item(0, 5)
@@ -89,6 +89,6 @@ class Ui_Form(object):
         item = self.valveValenceTable.item(0, 6)
         item.setText(_translate("Form", "0"))
         item = self.valveValenceTable.item(0, 7)
-        item.setText(_translate("Form", "100"))
+        item.setText(_translate("Form", "4"))
         self.valveValenceTable.setSortingEnabled(__sortingEnabled)
 

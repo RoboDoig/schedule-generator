@@ -90,7 +90,9 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
         valence_map = np.array(valence_map)
         valve_index = (np.where(valence_map == 0)[0],
                        np.where(valence_map == 1)[0],
-                       np.where(valence_map == 2)[0])
+                       np.where(valence_map == 2)[0],
+                       np.where(valence_map == 3)[0],
+                       np.where(valence_map == 4)[0])
 
         onset = float(self.onsetEdit.text())
         offset = float(self.onsetEdit.text())
@@ -101,7 +103,7 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
         shatter_duty_max = float(self.shatterDutyMaxEdit.text())
         nControlTrial = int(self.nControlTrialsEdit.text())
         single_valve_trials = float(self.fractionSingleValveEdit.text())
-        sp_correlated = bool(self.spCorrelatedEdit.text())
+        sp_correlated = bool(self.spCorrelatedCheck.isChecked())
 
         # algorithm to pick trials
         schedule = []
@@ -111,5 +113,33 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
             if v_decision <= single_valve_trials:
                 # single_valve_trial
                 b_valves = np.random.choice(valve_index[0], 2, replace=False) + 1
-                o1_valve = np.random.choice(valve_index[1], 1) + 1
-                o2_valve = np.random.choice(valve_index[2], 1) + 1
+                o1_valves = np.random.choice(valve_index[1], 1) + 1
+                o2_valves = np.random.choice(valve_index[2], 1) + 1
+
+            else:
+                # multi valve trial
+                b_valves = np.random.choice(valve_index[0], 2, replace=False) + 1
+                o1_valves = np.random.choice(valve_index[1], np.random.randint(1, 3), replace=False) + 1
+                o2_valves = np.random.choice(valve_index[2], np.random.randint(1, 3), replace=False) + 1
+
+            # decide whether odours are correlated or anti-correlated based on reward settings
+            if sp_correlated:
+                correlated = True if reward_sequence[t] == 1 else False
+            if not sp_correlated:
+                correlated = False if reward_sequence[t] == 1 else True
+
+            # choose relative contributions based on whether trial is correlated or not
+            o1_contribution = np.round(np.random.dirichlet(np.ones(len(o1_valves))) / 4.0, 2)
+            o2_contribution = np.round(np.random.dirichlet(np.ones(len(o1_valves))) / 4.0, 2)
+
+            if correlated:
+                b_contribution = np.round(np.random.dirichlet(np.ones(len(b_valves))) / 4.0, 2)
+            else:
+                b_contribution = [0.5 - sum(o1_contribution), 0.5 - sum(o2_contribution)]
+
+            schedule.append([reward_sequence[t], correlated, b_valves, b_contribution, o1_valves, o1_contribution,
+                             o2_valves, o2_contribution, onset, offset, length, valence_map])
+
+        return schedule, ['Rewarded', 'Correlated', 'Blank Vales', 'Blank Contribution', 'Odour 1 Valves',
+                          'Odour 1 Contribution', 'Odour 2 Valves', 'Odour 2 Contribution', 'Onset', 'Offset', 'Length',
+                          'Valence Map']

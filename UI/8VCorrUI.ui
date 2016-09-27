@@ -75,6 +75,13 @@
      </property>
     </widget>
    </item>
+   <item row="11" column="3">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>S+ Correlated</string>
+     </property>
+    </widget>
+   </item>
    <item row="5" column="0">
     <widget class="QLineEdit" name="nTrialsEdit">
      <property name="text">
@@ -152,10 +159,34 @@
      </property>
     </widget>
    </item>
+   <item row="12" column="3">
+    <widget class="QCheckBox" name="spCorrelatedCheck">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="4">
+    <widget class="QLabel" name="label_13">
+     <property name="text">
+      <string>Valve Map Setup : 0 = Blank, 1 = Odour 1, 2 = Odour 2, 3 = Control Odour 1, 4 = Control Blank </string>
+     </property>
+    </widget>
+   </item>
    <item row="12" column="1">
     <widget class="QLineEdit" name="nControlTrialsEdit">
      <property name="text">
       <string>12</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="4">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
@@ -177,34 +208,6 @@
     <widget class="QLineEdit" name="fractionSingleValveEdit">
      <property name="text">
       <string>0.75</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="4">
-    <widget class="QLabel" name="label_13">
-     <property name="text">
-      <string>Valve Map Setup : 0 = Blank, 1 = Odour 1, 2 = Odour 2, 101 = Control Odour 1, 100 = Control Blank </string>
-     </property>
-    </widget>
-   </item>
-   <item row="11" column="3">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>S+ Correlated</string>
-     </property>
-    </widget>
-   </item>
-   <item row="12" column="3">
-    <widget class="QLineEdit" name="spCorrelatedEdit">
-     <property name="text">
-      <string>True</string>
      </property>
     </widget>
    </item>
