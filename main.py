@@ -55,9 +55,12 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
 
         if self.current_schedule_type is not None:
             self.scheduleParamsContents.layout().removeWidget(self.current_schedule_type)
+            self.current_schedule_type.deleteLater()
 
         self.current_schedule_type = self.schedule_types[schedule_name]()
         self.scheduleParamsContents.layout().addWidget(self.current_schedule_type)
+
+        self.scheduleView.setModel(ScheduleView.ScheduleModel([], [[]]))
 
     def draw_pulse(self):
         trial = self.schedule[self.scheduleView.selectionModel().selectedRows()[0].row()]
