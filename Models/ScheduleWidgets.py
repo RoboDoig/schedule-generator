@@ -81,7 +81,7 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
         # how many valves available
         n_valves = len(valence_map)
 
-        # generate the reward sequence
+        # generate reward sequence
         n_trials = int(self.nTrialsEdit.text())
         reward_sequence = Gen.reward_sequence(n_trials)
 
@@ -98,53 +98,77 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
         length = float(self.trialLengthEdit.text())
         pulse_hz = float(self.pulseFrequencyEdit.text())
         shatter_hz = float(self.shatterFrequencyEdit.text())
-        shatter_duty_min = float(self.shatterDutyMinEdit.text())
-        shatter_duty_max = float(self.shatterDutyMaxEdit.text())
+        amp_min = float(self.shatterDutyMinEdit.text())
+        amp_max = float(self.shatterDutyMaxEdit.text())
         nControlTrial = int(self.nControlTrialsEdit.text())
         single_valve_trials = float(self.fractionSingleValveEdit.text())
         sp_correlated = bool(self.spCorrelatedCheck.isChecked())
 
-        # algorithm to pick trials
+        shatter_bounds = (amp_max - amp_min)
+
+        # algorithm for generating trials
         schedule = []
         for t in range(n_trials):
-            # decide whether odours are correlated or anti-correlated based on reward settings
+            # set correlation
             if sp_correlated:
                 correlated = True if reward_sequence[t] == 1 else False
-            if not sp_correlated:
+            else:
                 correlated = False if reward_sequence[t] == 1 else True
 
-            # decide whether single or multi-valve trial
-            v_decision = np.random.uniform()
-            if v_decision <= single_valve_trials:
-                # single_valve_trial
-                b_valves = np.random.choice(valve_index[0], 1, replace=False) + 1
-                o1_valves = np.random.choice(valve_index[1], 1) + 1
-                o2_valves = np.random.choice(valve_index[2], 1) + 1
-
+            # 1. how many valves will odour 1 use + relative contribution
+            v_decision = np.random.uniform() <= single_valve_trials
+            o1_v = np.random.choice(valve_index[1], 1) + 1 if v_decision else np.random.choice(valve_index[1], 2, replace=False) + 1
+            if len(o1_v) > 1:
+                o1_contribution = ((np.random.dirichlet(np.ones(len(o1_v))) * shatter_bounds) + amp_min) / 2.0
             else:
-                # multi valve trial
-                b_valves = np.random.choice(valve_index[0], np.random.randint(1, 3), replace=False) + 1
-                o1_valves = np.random.choice(valve_index[1], np.random.randint(1, 3), replace=False) + 1
-                o2_valves = np.random.choice(valve_index[2], np.random.randint(1, 3), replace=False) + 1
+                o1_contribution = [0.5]
+            o1_contribution = np.round(o1_contribution, 2)
 
-            # choose relative contributions based on whether trial is correlated or not
-            o1_contribution = np.round(np.random.dirichlet(np.ones(len(o1_valves))) / 4.0, 2)
-            o2_contribution = np.round(np.random.dirichlet(np.ones(len(o2_valves))) / 4.0, 2)
+            # 2. how many valves will odour 2 use + relative contribution
+            v_decision = np.random.uniform() <= single_valve_trials
+            o2_v = np.random.choice(valve_index[2], 1) + 1 if v_decision else np.random.choice(valve_index[2], 2, replace=False) + 1
+            if len(o2_v) > 1:
+                o2_contribution = ((np.random.dirichlet(np.ones(len(o2_v))) * shatter_bounds) + amp_min) / 2.0
+            else:
+                o2_contribution = [0.5]
+            o2_contribution = np.round(o2_contribution, 2)
+
+            # blank valve contributions
+            v_decision = np.random.uniform() <= single_valve_trials
+            b_v = np.random.choice(valve_index[0], 2, replace=False) + 1
+            b_contribution = ((np.random.dirichlet(np.ones(2)) * shatter_bounds) + amp_min) / 2.0 if v_decision else [0.5, 0.5]
+            b_contribution = np.round(b_contribution, 2)
 
             if correlated:
-                b_contribution = np.round(np.random.dirichlet(np.ones(len(b_valves))) / 2.0, 2)
+                # place position 1 valves and contributions
+                p1_valves = np.hstack((o1_v, o2_v))
+                p1_contribution = np.hstack((o1_contribution, o2_contribution))
+
+                # place position 2 valves and contributions
+                p2_valves = b_v
+                p2_contribution = b_contribution
             else:
-                b_contribution = [0.5 - sum(o1_contribution), 0.5 - sum(o2_contribution)]
+                # place valves and contributions
+                if b_contribution[0] == 0.5:
+                    p1_valves = np.hstack((o1_v, b_v[0]))
+                    p1_contribution = np.hstack((o1_contribution, b_contribution[0]))
 
-            schedule.append([reward_sequence[t], correlated, b_valves, b_contribution, o1_valves, o1_contribution,
-                             o2_valves, o2_contribution, pulse_hz, length, valence_map])
+                    p2_valves = np.hstack((o2_v, b_v[1]))
+                    p2_contribution = np.hstack((o2_contribution, b_contribution[1]))
+                else:
+                    p1_valves = np.hstack((o1_v, b_v[0], b_v[1]))
+                    p1_contribution = np.hstack((o1_contribution, b_contribution[0], b_contribution[1]))
 
-        return schedule, ['Rewarded', 'Correlated', 'Blank Vales', 'Blank Contribution', 'Odour 1 Valves',
-                          'Odour 1 Contribution', 'Odour 2 Valves', 'Odour 2 Contribution', 'Hz', 'Length',
-                          'Valence Map']
+                    p2_valves = np.hstack((o2_v, b_v[0], b_v[1]))
+                    p2_contribution = np.hstack((o2_contribution, b_contribution[1], b_contribution[0]))
+
+            schedule.append([reward_sequence[t], correlated, p1_valves, p1_contribution, p2_valves, p2_contribution, valence_map])
+
+        return schedule, ['Rewarded', 'Correlated', 'Position 1 Valves', 'Position 1 Contribtions', 'Position 2 Valves',
+                          'Position 2 Contributions', 'Valence Map']
 
     def pulse_parameters(self, trial):
-        valence_map = trial[10]
+        valence_map = trial[6]
         params = list()
 
         onset = float(self.onsetEdit.text())
@@ -173,26 +197,30 @@ class V8CorrWidget(QtWidgets.QWidget, v8CorrDesign.Ui_Form):
                      'onset': onset,
                      'offset': offset,
                      'amp_min': amp_min,
-                     'amp_max': amp_max}
+                     'amp_max': amp_max,
+                     'shadow': False}
 
             # place odour 1
             if p + 1 in trial[4]:
                 param['length'] = length
-                param['target_duty'] = trial[5][np.where(trial[4] == p + 1)[0]]
+                param['target_duty'] = trial[5][np.where(trial[4] == p + 1)[0]] * 2
 
             # place odour 2
             if p + 1 in trial[6]:
                 param['length'] = length
+                param['target_duty'] = trial[7][np.where(trial[6] == p + 1)[0]] * 2
                 if not trial[1]:
                     param['onset'] = onset + ((1.0 / trial[8])/2.0)
 
             # place blanks
             if p + 1 in trial[2]:
                 param['length'] = length
+                param['target_duty'] = trial[3][np.where(trial[2] == p + 1)[0]]
                 if trial[1]:
                     param['onset'] = onset + ((1.0 / trial[8])/2.0)
                 else:
-                    param['onset'] = onset + (np.where(trial[2] == p + 1)[0][0] * ((1.0 / trial[8]) / 2.0))
+                    # param['onset'] = onset + (np.where(trial[2] == p + 1)[0][0] * ((1.0 / trial[8]) / 2.0))
+                    param['shadow'] = True
 
             params.append(param)
 
