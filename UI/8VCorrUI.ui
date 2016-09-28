@@ -31,14 +31,14 @@
    <item row="9" column="2">
     <widget class="QLineEdit" name="shatterDutyMinEdit">
      <property name="text">
-      <string>0.1</string>
+      <string>0.0</string>
      </property>
     </widget>
    </item>
    <item row="9" column="3">
     <widget class="QLineEdit" name="shatterDutyMaxEdit">
      <property name="text">
-      <string>0.9</string>
+      <string>1.0</string>
      </property>
     </widget>
    </item>
