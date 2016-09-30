@@ -1,6 +1,7 @@
 import sys
 import inspect
 import numpy as np
+import pickle
 
 from PyQt5 import QtWidgets
 from Designs import mainDesign
@@ -35,6 +36,8 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         self.scheduleView.setModel(ScheduleView.ScheduleModel([], [[]]))
 
         # add function bindings
+        self.actionSave.triggered.connect(self.save_schedule)
+
         self.generateScheduleButton.clicked.connect(self.generate)
 
         self.scheduleTypesCombo.activated.connect(self.select_schedule_type)
@@ -72,6 +75,18 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         for p, pulse in enumerate(pulses):
             color = ColorMap.c_list[self.valence_map.get_valence_map()[p]]
             self.pulseView.plotItem.plot(t, np.array(pulse) - (p*1.1), pen=color)
+
+    def save_schedule(self):
+        params = list()
+        for trial in self.schedule:
+            params.append(self.current_schedule_type.pulse_parameters(trial))
+
+        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Save Schedule", "", ".schedule")
+        with open(fname[0] + fname[1], 'wb') as fn:
+            pickle.dump({'schedule': self.schedule,
+                         'headers': self.schedule_headers,
+                         'params': params}, fn)
+
 
 # Back up the reference to the exceptionhook
 sys._excepthook = sys.excepthook
