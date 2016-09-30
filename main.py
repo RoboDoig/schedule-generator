@@ -8,7 +8,7 @@ from Models import Widgets
 
 from Models import ScheduleWidgets, ScheduleView
 from UI import ColorMap
-import PulseInterface
+from PyPulse import PulseInterface
 
 
 class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):

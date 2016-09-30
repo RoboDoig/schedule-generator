@@ -130,6 +130,7 @@ class SimpleCorrWidget(QtWidgets.QWidget, simpleCorrDesign.Ui_Form):
         valence_map = trial[6]
 
         anti_phase_offset = (1.0 / frequency) * 0.5
+        phase_choice = np.random.randint(0, 2)
 
         for p in range(len(valence_map)):
             param = {'type': 'Simple',
@@ -146,19 +147,23 @@ class SimpleCorrWidget(QtWidgets.QWidget, simpleCorrDesign.Ui_Form):
             if p + 1 in o1_valve:
                 param['length'] = length
                 if correlated:
-                    param['offset'] += anti_phase_offset
+                    param['onset'] += anti_phase_offset * phase_choice
+                else:
+                    param['onset'] += anti_phase_offset * phase_choice
 
             # is this an odour 2 valve
             if p + 1 in o2_valve:
                 param['length'] = length
-                if not correlated:
-                    param['onset'] += anti_phase_offset
+                if correlated:
+                    param['onset'] += anti_phase_offset * phase_choice
+                else:
+                    param['onset'] += anti_phase_offset * (1 - phase_choice)
 
             # is this a blank valve
             if p + 1 in b_valves:
                 param['length'] = length
                 if correlated:
-                    param['onset'] += anti_phase_offset
+                    param['onset'] += anti_phase_offset * (1 - phase_choice)
                 else:
                     param['onset'] += anti_phase_offset * np.where(b_valves == p + 1)[0][0]
 
