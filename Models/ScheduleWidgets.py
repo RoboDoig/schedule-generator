@@ -140,7 +140,9 @@ class SimpleCorrWidget(QtWidgets.QWidget, simpleCorrDesign.Ui_Form):
                      'length': 0.0,
                      'isClean': True,
                      'onset': onset,
-                     'offset': offset}
+                     'offset': offset,
+                     'phase_chop': True,
+                     'chop_amount': 0.25}
 
             # is this an odour 1 valve
             if p + 1 in o1_valve:
