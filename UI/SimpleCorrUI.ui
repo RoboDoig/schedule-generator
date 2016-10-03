@@ -40,13 +40,6 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="3">
-    <widget class="QLabel" name="label_10">
-     <property name="text">
-      <string>S+ Correlated</string>
-     </property>
-    </widget>
-   </item>
    <item row="5" column="0">
     <widget class="QLineEdit" name="nTrialsEdit">
      <property name="text">
@@ -145,13 +138,34 @@
      </property>
     </widget>
    </item>
-   <item row="9" column="3">
+   <item row="8" column="2">
+    <widget class="QLabel" name="label_10">
+     <property name="text">
+      <string>S+ Correlated</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="2">
     <widget class="QCheckBox" name="spCorrelatedCheck">
      <property name="text">
       <string/>
      </property>
      <property name="checked">
       <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="3">
+    <widget class="QLabel" name="label_6">
+     <property name="text">
+      <string>Lick Fraction</string>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="3">
+    <widget class="QLineEdit" name="lickFractionEdit">
+     <property name="text">
+      <string>0.1</string>
      </property>
     </widget>
    </item>
