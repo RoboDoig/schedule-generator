@@ -67,7 +67,7 @@
       </font>
      </property>
      <property name="text">
-      <string>8 Valve Correlated vs. Uncorrelated - Simple</string>
+      <string>8 Valve Correlated vs. Uncorrelated</string>
      </property>
     </widget>
    </item>
@@ -127,13 +127,6 @@
      </property>
     </widget>
    </item>
-   <item row="10" column="0" colspan="4">
-    <widget class="Line" name="line_3">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
    <item row="2" column="0" colspan="4">
     <widget class="QLabel" name="label_13">
      <property name="text">
@@ -166,6 +159,41 @@
     <widget class="QLineEdit" name="offsetEdit">
      <property name="text">
       <string>0.1</string>
+     </property>
+    </widget>
+   </item>
+   <item row="10" column="0" colspan="4">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="3">
+    <widget class="QLineEdit" name="fractionSimpleTrialsEdit">
+     <property name="text">
+      <string>0.5</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="3">
+    <widget class="QLabel" name="label_7">
+     <property name="text">
+      <string>Fraction 'Simple' Trials</string>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="0">
+    <widget class="QLabel" name="label_8">
+     <property name="text">
+      <string>Shatter Duty (Hz)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="12" column="0">
+    <widget class="QLineEdit" name="shatterDutyEdit">
+     <property name="text">
+      <string>500</string>
      </property>
     </widget>
    </item>
