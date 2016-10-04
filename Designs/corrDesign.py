@@ -97,9 +97,9 @@ class Ui_Form(object):
         self.label_8 = QtWidgets.QLabel(Form)
         self.label_8.setObjectName("label_8")
         self.gridLayout.addWidget(self.label_8, 11, 0, 1, 1)
-        self.shatterDutyEdit = QtWidgets.QLineEdit(Form)
-        self.shatterDutyEdit.setObjectName("shatterDutyEdit")
-        self.gridLayout.addWidget(self.shatterDutyEdit, 12, 0, 1, 1)
+        self.shatterHzEdit = QtWidgets.QLineEdit(Form)
+        self.shatterHzEdit.setObjectName("shatterHzEdit")
+        self.gridLayout.addWidget(self.shatterHzEdit, 12, 0, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -127,5 +127,5 @@ class Ui_Form(object):
         self.fractionSimpleTrialsEdit.setText(_translate("Form", "0.5"))
         self.label_7.setText(_translate("Form", "Fraction \'Simple\' Trials"))
         self.label_8.setText(_translate("Form", "Shatter Duty (Hz)"))
-        self.shatterDutyEdit.setText(_translate("Form", "500"))
+        self.shatterHzEdit.setText(_translate("Form", "200"))
 

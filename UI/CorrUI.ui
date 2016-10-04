@@ -191,9 +191,9 @@
     </widget>
    </item>
    <item row="12" column="0">
-    <widget class="QLineEdit" name="shatterDutyEdit">
+    <widget class="QLineEdit" name="shatterHzEdit">
      <property name="text">
-      <string>500</string>
+      <string>200</string>
      </property>
     </widget>
    </item>

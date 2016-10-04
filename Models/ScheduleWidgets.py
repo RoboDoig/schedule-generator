@@ -163,7 +163,6 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
                 b_contributions = [0.5, 0.5]
             # otherwise there are some differences according to correlation structure
             else:
-                print(t)
                 # can be made up of random combination of 1 or 2 valves, b valve contrs. add to 1
                 o1_valve = np.random.choice(valve_index[1], np.random.randint(1, 3), replace=False) + 1
                 o1_contributions = np.round(np.random.dirichlet(np.ones(len(o1_valve))) * 0.5, 2)
@@ -186,3 +185,77 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
         return schedule, ['Rewarded', 'Correlated', 'Odour 1 Valve', 'O1 Contributions', 'Odour 2 Valves',
                           'O2 Contributions', 'Blank Valves', 'B Contributions', 'Frequency',
                           'Valence Map', 'Lick Fraction']
+
+    def pulse_parameters(self, trial):
+        params = list()
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+        shatter_hz = float(self.shatterHzEdit.text())
+        correlated = trial[1]
+        o1_valve = trial[2]
+        o1_contr = trial[3]
+        o2_valve = trial[4]
+        o2_contr = trial[5]
+        b_valve = trial[6]
+        b_contr = trial[7]
+        frequency = trial[8]
+        valence_map = trial[9]
+
+        anti_phase_offset = (1.0 / frequency) * 0.5
+        phase_choice = np.random.randint(0, 2)
+
+        for p in range(len(valence_map)):
+            param = {'type': 'RandomNoise',
+                     'fromDuty': True,
+                     'frequency': frequency,
+                     'duty': 0.5,
+                     'fromLength': True,
+                     'length': 0.0,
+                     'isClean': True,
+                     'onset': onset,
+                     'offset': offset,
+                     'phase_chop': True,
+                     'lick_fraction': trial[10],
+                     'shadow': False,
+                     'shatter_frequency': shatter_hz,
+                     'target_duty': 0.5,
+                     'amp_min': 0.0,
+                     'amp_max': 1.0}
+
+            # is this an odour 1 valve
+            if p + 1 in o1_valve:
+                param['length'] = length
+                param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
+                if correlated:
+                    param['onset'] += anti_phase_offset * phase_choice
+                else:
+                    param['onset'] += anti_phase_offset * phase_choice
+
+            # is this an odour 2 valve
+            if p + 1 in o2_valve:
+                param['length'] = length
+                param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
+                if correlated:
+                    param['onset'] += anti_phase_offset * phase_choice
+                else:
+                    param['onset'] += anti_phase_offset * (1 - phase_choice)
+
+            # is this a blank valve
+            if p + 1 in b_valve:
+                param['length'] = length
+                param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
+                if correlated:
+                    param['onset'] += anti_phase_offset * (1 - phase_choice)
+                else:
+                    if param['target_duty'] != 0.5:
+                        param['shadow'] = True
+                    else:
+                        param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
+
+
+
+            params.append(param)
+
+        return params
