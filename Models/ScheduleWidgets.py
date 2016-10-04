@@ -151,32 +151,41 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
 
             simple_choice = np.random.uniform() > float(self.fractionSimpleTrialsEdit.text())
 
+            if t < n_trials:
+                o1_choice = valve_index[1]
+                o2_choice = valve_index[2]
+                b_choice = valve_index[0]
+            else:
+                o1_choice = np.hstack((valve_index[3], np.random.choice(valve_index[1], 1)))
+                o2_choice = valve_index[2]
+                b_choice = np.hstack((valve_index[4], np.random.choice(valve_index[0], 1)))
+
             if simple_choice:
                 # for a simple choice we will always need 1 o1, 1 o2 valves and 2 b valves all at 50% open
-                o1_valve = np.random.choice(valve_index[1], 1, replace=False) + 1
+                o1_valve = np.random.choice(o1_choice, 1, replace=False) + 1
                 o1_contributions = [0.5]
 
-                o2_valve = np.random.choice(valve_index[2], 1, replace=False) + 1
+                o2_valve = np.random.choice(o2_choice, 1, replace=False) + 1
                 o2_contributions = [0.5]
 
-                b_valve = np.random.choice(valve_index[0], 2, replace=False) + 1
+                b_valve = np.random.choice(b_choice, 2, replace=False) + 1
                 b_contributions = [0.5, 0.5]
             # otherwise there are some differences according to correlation structure
             else:
                 # can be made up of random combination of 1 or 2 valves, b valve contrs. add to 1
-                o1_valve = np.random.choice(valve_index[1], np.random.randint(1, 3), replace=False) + 1
+                o1_valve = np.random.choice(o1_choice, np.random.randint(1, 3), replace=False) + 1
                 o1_contributions = np.round(np.random.dirichlet(np.ones(len(o1_valve))) * 0.5, 2)
 
-                o2_valve = np.random.choice(valve_index[2], np.random.randint(1, 3), replace=False) + 1
+                o2_valve = np.random.choice(o2_choice, np.random.randint(1, 3), replace=False) + 1
                 o2_contributions = np.round(np.random.dirichlet(np.ones(len(o2_valve))) * 0.5, 2)
 
                 if correlated:
                     # if correlated we want our blank valves to add to 1 + we always need 2 valves
-                    b_valve = np.random.choice(valve_index[0], 2, replace=False) + 1
+                    b_valve = np.random.choice(b_choice, 2, replace=False) + 1
                     b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))), 2)
                 else:
                     # else they must add to 0.5
-                    b_valve = np.random.choice(valve_index[0], 2, replace=False) + 1
+                    b_valve = np.random.choice(b_choice, 2, replace=False) + 1
                     b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))) * 0.5, 2)
 
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
