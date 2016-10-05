@@ -29,7 +29,7 @@
       </font>
      </property>
      <property name="text">
-      <string>Simple Go / No-Go</string>
+      <string>Pretrain</string>
      </property>
     </widget>
    </item>
@@ -96,17 +96,10 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="5">
-    <widget class="QCheckBox" name="checkBox">
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="4" column="5">
     <widget class="QLabel" name="label_7">
      <property name="text">
-      <string>Reverse Valence</string>
+      <string>Target</string>
      </property>
     </widget>
    </item>
@@ -121,6 +114,13 @@
     <widget class="QLabel" name="label_13">
      <property name="text">
       <string>Valve Map Setup : 1 = Odour 1, 2 = Odour 2</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="5">
+    <widget class="QLineEdit" name="targetEdit">
+     <property name="text">
+      <string>0</string>
      </property>
     </widget>
    </item>

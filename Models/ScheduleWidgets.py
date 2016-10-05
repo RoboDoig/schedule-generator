@@ -1,8 +1,69 @@
 from PyQt5 import QtWidgets
 import numpy as np
 
-from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign
+from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign
 from Generation import Gen
+
+
+class PretrainWidget(QtWidgets.QWidget, pretrainDesign.Ui_Form):
+    def __init__(self, parentUi=None):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+
+        self.parentUi = parentUi
+
+        self.valence_map = None
+
+    def generate_schedule(self, valence_map):
+        lick_fraction = float(self.lickFractionEdit.text())
+        n_valves = len(valence_map)
+
+        n_trials = int(self.nTrialsEdit.text())
+        target = int(self.targetEdit.text())
+
+        valence_map = np.array(valence_map)
+        valve_index = (np.where(valence_map == 0)[0],
+                       np.where(valence_map == 1)[0],
+                       np.where(valence_map == 2)[0],
+                       np.where(valence_map == 3)[0],
+                       np.where(valence_map == 4)[0])
+
+        schedule = []
+        for t in range(n_trials):
+            valve = np.random.choice(valve_index[target], 1) + 1
+            schedule.append([1, valve, valence_map, lick_fraction])
+
+        return schedule, ['Rewarded', 'Valve', 'Valence Map', 'Lick Fraction']
+
+    def pulse_parameters(self, trial):
+        params = list()
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+        valve = trial[1]
+        valence_map = trial[2]
+
+        for p in range(len(valence_map)):
+            param = {'type': 'Simple',
+                     'fromDuty': False,
+                     'fromValues': True,
+                     'pulse_width': length,
+                     'pulse_delay': 0.0,
+                     'fromLength': False,
+                     'fromRepeats': True,
+                     'repeats': 0,
+                     'length': 0.0,
+                     'isClean': True,
+                     'onset': onset,
+                     'offset': offset}
+
+            if p + 1 in valve:
+                param['repeats'] = 1
+
+            params.append(param)
+
+        return params
 
 
 class SimpleGNGWidget(QtWidgets.QWidget, simpleGNGDesign.Ui_Form):
@@ -230,7 +291,7 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
                 o2_choice = valve_index[2]
                 b_choice = valve_index[0]
             else:
-                o1_choice = np.hstack((valve_index[3], np.random.choice(valve_index[1], 1)))
+                o1_choice = valve_index[3]
                 o2_choice = valve_index[2]
                 b_choice = np.hstack((valve_index[4], np.random.choice(valve_index[0], 1)))
 
@@ -247,7 +308,7 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
             # otherwise there are some differences according to correlation structure
             else:
                 # can be made up of random combination of 1 or 2 valves, b valve contrs. add to 1
-                o1_valve = np.random.choice(o1_choice, np.random.randint(1, 3), replace=False) + 1
+                o1_valve = np.random.choice(o1_choice, np.random.randint(1, len(o1_choice) + 1), replace=False) + 1
                 o1_contributions = np.round(np.random.dirichlet(np.ones(len(o1_valve))) * 0.5, 2)
 
                 o2_valve = np.random.choice(o2_choice, np.random.randint(1, 3), replace=False) + 1

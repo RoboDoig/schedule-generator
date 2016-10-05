@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI/SimpleGNGUI.ui'
+# Form implementation generated from reading ui file 'UI/PretrainUI.ui'
 #
 # Created by: PyQt5 UI code generator 5.5.1
 #
@@ -50,10 +50,6 @@ class Ui_Form(object):
         self.offsetEdit = QtWidgets.QLineEdit(Form)
         self.offsetEdit.setObjectName("offsetEdit")
         self.gridLayout.addWidget(self.offsetEdit, 5, 3, 1, 1)
-        self.checkBox = QtWidgets.QCheckBox(Form)
-        self.checkBox.setText("")
-        self.checkBox.setObjectName("checkBox")
-        self.gridLayout.addWidget(self.checkBox, 5, 5, 1, 1)
         self.label_7 = QtWidgets.QLabel(Form)
         self.label_7.setObjectName("label_7")
         self.gridLayout.addWidget(self.label_7, 4, 5, 1, 1)
@@ -65,6 +61,9 @@ class Ui_Form(object):
         self.label_13 = QtWidgets.QLabel(Form)
         self.label_13.setObjectName("label_13")
         self.gridLayout.addWidget(self.label_13, 2, 0, 1, 6)
+        self.targetEdit = QtWidgets.QLineEdit(Form)
+        self.targetEdit.setObjectName("targetEdit")
+        self.gridLayout.addWidget(self.targetEdit, 5, 5, 1, 1)
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -73,7 +72,7 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.label_5.setText(_translate("Form", "Trial Length (s)"))
-        self.label_3.setText(_translate("Form", "Simple Go / No-Go"))
+        self.label_3.setText(_translate("Form", "Pretrain"))
         self.label_2.setText(_translate("Form", "Trial Onset (s)"))
         self.label.setText(_translate("Form", "Number of Trials"))
         self.trialLengthEdit.setText(_translate("Form", "2.0"))
@@ -83,6 +82,7 @@ class Ui_Form(object):
         self.lickFractionEdit.setText(_translate("Form", "0.1"))
         self.label_6.setText(_translate("Form", "Lick Fraction"))
         self.offsetEdit.setText(_translate("Form", "0.1"))
-        self.label_7.setText(_translate("Form", "Reverse Valence"))
+        self.label_7.setText(_translate("Form", "Target"))
         self.label_13.setText(_translate("Form", "Valve Map Setup : 1 = Odour 1, 2 = Odour 2"))
+        self.targetEdit.setText(_translate("Form", "0"))
 
