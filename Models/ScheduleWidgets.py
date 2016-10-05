@@ -56,7 +56,8 @@ class PretrainWidget(QtWidgets.QWidget, pretrainDesign.Ui_Form):
                      'length': 0.0,
                      'isClean': True,
                      'onset': onset,
-                     'offset': offset}
+                     'offset': offset,
+                     'lick_fraction': trial[3]}
 
             if p + 1 in valve:
                 param['repeats'] = 1
@@ -130,7 +131,8 @@ class SimpleGNGWidget(QtWidgets.QWidget, simpleGNGDesign.Ui_Form):
                      'length': 0.0,
                      'isClean': True,
                      'onset': onset,
-                     'offset': offset}
+                     'offset': offset,
+                     'lick_fraction': trial[3]}
 
             if p + 1 in valve:
                 param['repeats'] = 1
