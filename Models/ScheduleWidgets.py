@@ -293,6 +293,7 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
                 o2_choice = valve_index[2]
                 b_choice = valve_index[0]
             else:
+                simple_choice = True
                 o1_choice = valve_index[3]
                 o2_choice = valve_index[2]
                 b_choice = np.hstack((valve_index[4], np.random.choice(valve_index[0], 1)))
