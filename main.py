@@ -81,11 +81,14 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
         for trial in self.schedule:
             params.append(self.current_schedule_type.pulse_parameters(trial))
 
-        fname = QtWidgets.QFileDialog.getSaveFileName(self, "Save Schedule", "", ".schedule")
-        with open(fname[0] + fname[1], 'wb') as fn:
-            pickle.dump({'schedule': self.schedule,
-                         'headers': self.schedule_headers,
-                         'params': params}, fn)
+        fname, suff = QtWidgets.QFileDialog.getSaveFileName(self, "Save Schedule", '', "Schedule File (*.schedule)")
+        try:
+            with open(fname, 'wb') as fn:
+                pickle.dump({'schedule': self.schedule,
+                             'headers': self.schedule_headers,
+                             'params': params}, fn)
+        except:
+            pass
 
 
 # Back up the reference to the exceptionhook
