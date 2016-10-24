@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 import numpy as np
 
-from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign
+from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign, shatterValveTestDesign
 from Generation import Gen
 
 
@@ -401,8 +401,90 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
                     else:
                         param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
 
+            params.append(param)
 
+        return params
+
+
+class ShatterValveWidget(QtWidgets.QWidget, shatterValveTestDesign.Ui_Form):
+    def __init__(self, parentUi=None):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+
+        self.parentUi = parentUi
+
+        self.valence_map = None
+
+    def generate_schedule(self, valence_map):
+        lick_fraction = float(self.lickFractionEdit.text())
+        n_valves = len(valence_map)
+
+        n_trials = int(self.nTrialsEdit.text())
+
+        valence_map = np.array(valence_map)
+        valve_index = (np.where(valence_map == 0)[0],
+                       np.where(valence_map == 1)[0])
+
+        frequency = float(self.pulseFrequencyEdit.text())
+
+        schedule = []
+        for t in range(n_trials):
+            o_choice = np.random.choice(valve_index[1], 1) + 1
+            b_choice = np.random.choice(valve_index[0], 1) + 1
+            amp_target = np.round(np.random.uniform(), 2)
+
+            schedule.append([1, o_choice, b_choice, amp_target, frequency, valence_map, lick_fraction])
+
+        return schedule, ['Rewarded', 'Odour Valve', 'Blank Valve', 'Target Amplitude', 'Frequency', 'Valence Map', 'Lick Fraction']
+
+    def pulse_parameters(self, trial):
+        params = list()
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+        shatter_hz = float(self.shatterHzEdit.text())
+        o_valve = trial[1]
+        b_valve = trial[2]
+        target_amp = trial[3]
+        frequency = trial[4]
+        valence_map = trial[5]
+
+        anti_phase_offset = (1.0 / frequency) * 0.5
+        phase_choice = np.random.randint(0, 2)
+
+        for p in range(len(valence_map)):
+            param = {'type': 'RandomNoise',
+                     'fromDuty': True,
+                     'frequency': frequency,
+                     'duty': 0.5,
+                     'fromLength': True,
+                     'length': 0.0,
+                     'isClean': True,
+                     'onset': onset,
+                     'offset': offset,
+                     'phase_chop': True,
+                     'lick_fraction': trial[6],
+                     'shadow': False,
+                     'shatter_frequency': shatter_hz,
+                     'target_duty': 0.5,
+                     'amp_min': 0.0,
+                     'amp_max': 1.0}
+
+            # is this an odour 1 valve
+            if p + 1 in o_valve:
+                print(p + 1)
+                param['length'] = length
+                param['onset'] += anti_phase_offset * (1 - phase_choice)
+                param['target_duty'] = target_amp
+
+            # is this a blank valve
+            if p + 1 in b_valve:
+                param['length'] = length
+                param['onset'] += anti_phase_offset * phase_choice
+                param['target_duty'] = target_amp
 
             params.append(param)
 
         return params
+

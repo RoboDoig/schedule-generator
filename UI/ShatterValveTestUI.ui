@@ -71,7 +71,7 @@
    <item row="8" column="3">
     <widget class="QLineEdit" name="lickFractionEdit">
      <property name="text">
-      <string>100</string>
+      <string>0.2</string>
      </property>
     </widget>
    </item>

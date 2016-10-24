@@ -84,7 +84,7 @@ class Ui_Form(object):
         self.label.setText(_translate("Form", "Number of Trials"))
         self.label_2.setText(_translate("Form", "Trial Onset (s)"))
         self.label_3.setText(_translate("Form", "Shatter Valve Test"))
-        self.lickFractionEdit.setText(_translate("Form", "100"))
+        self.lickFractionEdit.setText(_translate("Form", "0.2"))
         self.offsetEdit.setText(_translate("Form", "0.1"))
         self.pulseFrequencyEdit.setText(_translate("Form", "2"))
         self.label_6.setText(_translate("Form", "Lick Fraction"))
