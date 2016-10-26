@@ -324,7 +324,10 @@ class CorrWidget(QtWidgets.QWidget, corrDesign.Ui_Form):
                 else:
                     # else they must add to 0.5
                     b_valve = np.random.choice(b_choice, 2, replace=False) + 1
-                    b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))) * 0.5, 2)
+
+                    b_contributions = np.array([1.0, 0.0])
+                    while np.where(b_contributions == 1.0)[0] > 0:
+                        b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))) * 0.5, 2)
 
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
                              b_valve, b_contributions, frequency, valence_map, lick_fraction])
