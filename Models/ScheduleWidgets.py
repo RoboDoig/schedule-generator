@@ -483,16 +483,12 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                     # if correlated we want our blank valves to add to 1 + we always need 2 valves
                     b_valve = np.random.choice(b_choice, 2, replace=False) + 1
 
-                    b_contributions = np.array([1.0, 0.0])
-                    while np.prod(b_contributions) == 0:
-                        b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))), 2)
+                    b_contributions = np.array([0.5, 0.5])
                 else:
                     # else they must add to 0.5
                     b_valve = np.random.choice(b_choice, 2, replace=False) + 1
 
-                    b_contributions = np.array([1.0, 0.0])
-                    while np.prod(b_contributions) == 0:
-                        b_contributions = np.round(np.random.dirichlet(np.ones(len(b_valve))) * 0.5, 2)
+                    b_contributions = np.array([0.25, 0.25])
 
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
                              b_valve, b_contributions, frequency, valence_map, lick_fraction])
@@ -580,6 +576,7 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                 else:
                     if param['target_duty'] != 0.5:
                         param['shadow'] = True
+                        param['onset'] += anti_phase_offset
                     else:
                         param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
                         param['onset'] += anti_phase_offset

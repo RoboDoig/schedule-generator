@@ -68,6 +68,9 @@ class MainApp(QtWidgets.QMainWindow, mainDesign.Ui_MainWindow):
     def draw_pulse(self):
         trial = self.schedule[self.scheduleView.selectionModel().selectedRows()[0].row()]
         params = self.current_schedule_type.pulse_parameters(trial)
+        for p in params:
+            print(p['target_duty'])
+        print('--------------------')
 
         pulses, t = PulseInterface.make_pulse(20000.0, 0.0, 0.0, params)
 
