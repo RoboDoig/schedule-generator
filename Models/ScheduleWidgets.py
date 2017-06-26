@@ -491,11 +491,12 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                     b_contributions = np.array([0.25, 0.25])
 
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
-                             b_valve, b_contributions, frequency, valence_map, lick_fraction])
+                             b_valve, b_contributions, frequency, valence_map, lick_fraction, np.random.randint(0, 2),
+                             np.random.randint(0, 2)])
 
         return schedule, ['Rewarded', 'Correlated', 'Odour 1 Valve', 'O1 Contributions', 'Odour 2 Valves',
                           'O2 Contributions', 'Blank Valves', 'B Contributions', 'Frequency',
-                          'Valence Map', 'Lick Fraction']
+                          'Valence Map', 'Lick Fraction', 'Phase Choice', 'First Odour Choice']
 
     def pulse_parameters(self, trial):
         params = list()
@@ -513,10 +514,10 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
         b_contr = trial[7]
         frequency = trial[8]
         valence_map = trial[9]
+        phase_choice = trial[11]
+        first_odour_choice = trial[12]
 
         anti_phase_offset = (1.0 / frequency) * 0.5
-        phase_choice = np.random.randint(0, 2)
-        first_odour_choice = np.random.randint(0, 2)
 
         for p in range(len(valence_map)):
             param = {'type': 'RandomNoise',
@@ -542,7 +543,7 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                 param['length'] = length
                 param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
                 if correlated:
-                    param['onset'] += anti_phase_offset * phase_choice
+                    # param['onset'] += anti_phase_offset * phase_choice
                     if first_odour_choice is 0:
                         param['extend'] = True
                     else:
@@ -557,7 +558,7 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                 param['length'] = length
                 param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
                 if correlated:
-                    param['onset'] += anti_phase_offset * phase_choice
+                    # param['onset'] += anti_phase_offset * phase_choice
                     if first_odour_choice is 1:
                         param['extend'] = True
                     else:
@@ -572,14 +573,19 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                 param['length'] = length
                 param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
                 if correlated:
-                    param['onset'] += anti_phase_offset * (1 - phase_choice)
+                    if int(np.where(b_valve == p + 1)[0][0]) is 0:
+                        param['onset'] += anti_phase_offset * 2.0
+                        param['length'] -= anti_phase_offset * 2.0
+
                 else:
                     if param['target_duty'] != 0.5:
                         param['shadow'] = True
                         param['onset'] += anti_phase_offset
+                        param['length'] -= anti_phase_offset
                     else:
                         param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
                         param['onset'] += anti_phase_offset
+                        param['length'] -= (anti_phase_offset * (np.where(b_valve == p + 1)[0][0])) * 2.0
 
             params.append(param)
 
