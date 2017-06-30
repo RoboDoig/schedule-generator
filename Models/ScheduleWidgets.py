@@ -490,6 +490,10 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
 
                     b_contributions = np.array([0.25, 0.25])
 
+            if reward_sequence[t] > 0.5:
+                if np.random.uniform(0.0, 1.0) > float(self.fractionSpRewardedEdit.text()):
+                    reward_sequence[t] = 0
+
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
                              b_valve, b_contributions, frequency, valence_map, lick_fraction, np.random.randint(0, 2),
                              np.random.randint(0, 2)])
