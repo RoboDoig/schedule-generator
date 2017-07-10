@@ -1,5 +1,6 @@
 from PyQt5 import QtWidgets
 import numpy as np
+import random
 
 from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign, shatterValveTestDesign, \
     corrRandomFrequencyDesign, corrRandomFrequency2Design, corrDifficultySwitchDesign, corrOnsetDisruptDesign
@@ -441,9 +442,9 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
         sp_correlated = bool(self.spCorrelatedCheck.isChecked())
 
         schedule = []
-        for t in range(n_trials + n_control_trials):
+        ctrl_trials = random.sample(np.range(0, n_trials),n_control_trials)
+        for t in range(n_trials):
             # set correlation
-            if sp_correlated:
                 correlated = True if reward_sequence[t] == 1 else False
             else:
                 correlated = False if reward_sequence[t] == 1 else True
@@ -494,13 +495,18 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                 if np.random.uniform(0.0, 1.0) > float(self.fractionSpRewardedEdit.text()):
                     reward_sequence[t] = 0
 
+            if t in ctrl_trials:
+                ctrl_trial = 1
+            else:
+                ctrl_trial = 0
+
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
                              b_valve, b_contributions, frequency, valence_map, lick_fraction, np.random.randint(0, 2),
-                             np.random.randint(0, 2)])
+                             np.random.randint(0, 2)], ctrl_trial)
 
         return schedule, ['Rewarded', 'Correlated', 'Odour 1 Valve', 'O1 Contributions', 'Odour 2 Valves',
                           'O2 Contributions', 'Blank Valves', 'B Contributions', 'Frequency',
-                          'Valence Map', 'Lick Fraction', 'Phase Choice', 'First Odour Choice']
+                          'Valence Map', 'Lick Fraction', 'Phase Choice', 'First Odour Choice', 'Control Trial']
 
     def pulse_parameters(self, trial):
         params = list()
