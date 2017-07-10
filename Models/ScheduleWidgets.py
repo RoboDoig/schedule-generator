@@ -442,9 +442,10 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
         sp_correlated = bool(self.spCorrelatedCheck.isChecked())
 
         schedule = []
-        ctrl_trials = random.sample(np.range(0, n_trials),n_control_trials)
+        ctrl_trials = random.sample(range(0, n_trials),n_control_trials)
         for t in range(n_trials):
             # set correlation
+            if sp_correlated:
                 correlated = True if reward_sequence[t] == 1 else False
             else:
                 correlated = False if reward_sequence[t] == 1 else True
@@ -502,7 +503,7 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
 
             schedule.append([reward_sequence[t], correlated, o1_valve, o1_contributions, o2_valve, o2_contributions,
                              b_valve, b_contributions, frequency, valence_map, lick_fraction, np.random.randint(0, 2),
-                             np.random.randint(0, 2)], ctrl_trial)
+                             np.random.randint(0, 2), ctrl_trial])
 
         return schedule, ['Rewarded', 'Correlated', 'Odour 1 Valve', 'O1 Contributions', 'Odour 2 Valves',
                           'O2 Contributions', 'Blank Valves', 'B Contributions', 'Frequency',
@@ -526,6 +527,7 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
         valence_map = trial[9]
         phase_choice = trial[11]
         first_odour_choice = trial[12]
+        ctrl_trial = trial[13]
 
         anti_phase_offset = (1.0 / frequency) * 0.5
 
@@ -548,54 +550,88 @@ class CorrOnsetDisruptWidget(QtWidgets.QWidget, corrOnsetDisruptDesign.Ui_Form):
                      'amp_max': 1.0,
                      'extend': False}
 
-            # is this an odour 1 valve
-            if p + 1 in o1_valve:
-                param['length'] = length
-                param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
-                if correlated:
-                    # param['onset'] += anti_phase_offset * phase_choice
-                    if first_odour_choice is 0:
-                        param['extend'] = True
-                    else:
-                        param['onset'] += anti_phase_offset
-                else:
-                    # param['onset'] += anti_phase_offset * phase_choice
-                    if phase_choice is 1:
-                        param['extend'] = True
+            if ctrl_trial > 0.5:
 
-            # is this an odour 2 valve
-            if p + 1 in o2_valve:
-                param['length'] = length
-                param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
-                if correlated:
-                    # param['onset'] += anti_phase_offset * phase_choice
-                    if first_odour_choice is 1:
-                        param['extend'] = True
+                # is this an odour 1 valve
+                if p + 1 in o1_valve:
+                    param['length'] = length
+                    param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
+                    if correlated:
+                        # param['onset'] += anti_phase_offset * phase_choice
+                        if first_odour_choice is 0:
+                            param['extend'] = True
+                        else:
+                            param['onset'] += anti_phase_offset
                     else:
-                        param['onset'] += anti_phase_offset
-                else:
-                    # param['onset'] += anti_phase_offset * (1 - phase_choice)
-                    if phase_choice is 0:
-                        param['extend'] = True
+                        # param['onset'] += anti_phase_offset * phase_choice
+                        if phase_choice is 1:
+                            param['extend'] = True
 
-            # is this a blank valve
-            if p + 1 in b_valve:
-                param['length'] = length
-                param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
-                if correlated:
-                    if int(np.where(b_valve == p + 1)[0][0]) is 0:
-                        param['onset'] += anti_phase_offset * 2.0
-                        param['length'] -= anti_phase_offset * 2.0
-
-                else:
-                    if param['target_duty'] != 0.5:
-                        param['shadow'] = True
-                        param['onset'] += anti_phase_offset
-                        param['length'] -= anti_phase_offset
+                # is this an odour 2 valve
+                if p + 1 in o2_valve:
+                    param['length'] = length
+                    param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
+                    if correlated:
+                        # param['onset'] += anti_phase_offset * phase_choice
+                        if first_odour_choice is 1:
+                            param['extend'] = True
+                        else:
+                            param['onset'] += anti_phase_offset
                     else:
-                        param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
-                        param['onset'] += anti_phase_offset
-                        param['length'] -= (anti_phase_offset * (np.where(b_valve == p + 1)[0][0])) * 2.0
+                        # param['onset'] += anti_phase_offset * (1 - phase_choice)
+                        if phase_choice is 0:
+                            param['extend'] = True
+
+                # is this a blank valve
+                if p + 1 in b_valve:
+                    param['length'] = length
+                    param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
+                    if correlated:
+                        if int(np.where(b_valve == p + 1)[0][0]) is 0:
+                            param['onset'] += anti_phase_offset * 2.0
+                            param['length'] -= anti_phase_offset * 2.0
+
+                    else:
+                        if param['target_duty'] != 0.5:
+                            param['shadow'] = True
+                            param['onset'] += anti_phase_offset
+                            param['length'] -= anti_phase_offset
+                        else:
+                            param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
+                            param['onset'] += anti_phase_offset
+                            param['length'] -= (anti_phase_offset * (np.where(b_valve == p + 1)[0][0])) * 2.0
+
+            else:
+
+                # is this an odour 1 valve
+                if p + 1 in o1_valve:
+                    param['length'] = length
+                    param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
+                    if correlated:
+                        param['onset'] += anti_phase_offset * phase_choice
+                    else:
+                        param['onset'] += anti_phase_offset * phase_choice
+
+                # is this an odour 2 valve
+                if p + 1 in o2_valve:
+                    param['length'] = length
+                    param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
+                    if correlated:
+                        param['onset'] += anti_phase_offset * phase_choice
+                    else:
+                        param['onset'] += anti_phase_offset * (1 - phase_choice)
+
+                # is this a blank valve
+                if p + 1 in b_valve:
+                    param['length'] = length
+                    param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
+                    if correlated:
+                        param['onset'] += anti_phase_offset * (1 - phase_choice)
+                    else:
+                        if param['target_duty'] != 0.5:
+                            param['shadow'] = True
+                        else:
+                            param['onset'] += anti_phase_offset * np.where(b_valve == p + 1)[0][0]
 
             params.append(param)
 
