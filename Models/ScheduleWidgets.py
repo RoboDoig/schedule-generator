@@ -4,7 +4,7 @@ import random
 
 from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign, shatterValveTestDesign, \
     corrRandomFrequencyDesign, corrRandomFrequency2Design, corrDifficultySwitchDesign, corrOnsetDisruptDesign, \
-    concGNGDesign
+    concGNGDesign, corrDifficultySwitchCameraTriggerDesign
 from Generation import Gen
 
 
