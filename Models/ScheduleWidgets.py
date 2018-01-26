@@ -1392,7 +1392,7 @@ class CorrDifficultySwitchCameraTriggerWidget(QtWidgets.QWidget, corrDifficultyS
 
             # is this a camera channel?
             if p + 1 in c_channel:
-                param['length'] = length + onset
+                param['length'] = length + onset + 1.0
                 param['type'] = 'Simple'
                 param['frequency'] = frame_rate
                 param['onset'] = 0.0
