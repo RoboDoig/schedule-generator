@@ -4,11 +4,7 @@ import random
 
 from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign, shatterValveTestDesign, \
     corrRandomFrequencyDesign, corrRandomFrequency2Design, corrDifficultySwitchDesign, corrOnsetDisruptDesign, \
-<<<<<<< HEAD
     concGNGDesign
-=======
-    corrDifficultySwitchCameraTriggerDesign
->>>>>>> aa20f5fa8d9378b4b4c54afc28a6982723d9d2c3
 from Generation import Gen
 
 
