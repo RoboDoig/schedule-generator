@@ -4,7 +4,7 @@ import random
 
 from Designs import simpleCorrDesign, corrDesign, simpleGNGDesign, pretrainDesign, shatterValveTestDesign, \
     corrRandomFrequencyDesign, corrRandomFrequency2Design, corrDifficultySwitchDesign, corrOnsetDisruptDesign, \
-    corrDifficultySwitchCameraTriggerDesign
+    concGNGDesign, corrDifficultySwitchCameraTriggerDesign
 from Generation import Gen
 
 
@@ -58,6 +58,87 @@ class PretrainWidget(QtWidgets.QWidget, pretrainDesign.Ui_Form):
                      'repeats': 0,
                      'length': 0.0,
                      'isClean': True,
+                     'onset': onset,
+                     'offset': offset,
+                     'lick_fraction': trial[3]}
+
+            if p + 1 in valve:
+                param['repeats'] = 1
+
+            params.append(param)
+
+        return params
+
+
+class ConcGNGWidget(QtWidgets.QWidget, concGNGDesign.Ui_Form):
+    def __init__(self, parentUi=None):
+        super(self.__class__, self).__init__()
+        self.setupUi(self)
+
+        self.parentUi = parentUi
+
+        self.valence_map = None
+
+    def generate_schedule(self, valence_map):
+        lick_fraction = float(self.lickFractionEdit.text())
+        n_valves = len(valence_map)
+        min_conc = float(self.minConcEdit.text())
+
+        n_trials = int(self.nTrialsEdit.text())
+        reward_sequence = Gen.reward_sequence(n_trials)
+
+        valence_map = np.array(valence_map)
+        valve_index = (np.where(valence_map == 0)[0],
+                       np.where(valence_map == 1)[0],
+                       np.where(valence_map == 2)[0])
+
+        if not bool(self.reverseValenceCheck.isChecked()):
+            rewarded_choice = valve_index[1]
+            unrewarded_choice = valve_index[2]
+        else:
+            rewarded_choice = valve_index[2]
+            unrewarded_choice = valve_index[1]
+
+        schedule = []
+        for t in range(n_trials):
+            rewarded = reward_sequence[t] == 1
+
+            if rewarded:
+                valve = np.random.choice(rewarded_choice, 1) + 1
+            else:
+                valve = np.random.choice(unrewarded_choice, 1) + 1
+
+            conc_level = np.round(np.random.uniform(min_conc, 1.0), 2)
+
+            schedule.append([reward_sequence[t], valve, valence_map, conc_level, lick_fraction])
+
+        return schedule, ['Rewarded', 'Valve', 'Valence Map', 'Conc. Level', 'Lick Fraction']
+
+    def pulse_parameters(self, trial):
+        params = list()
+
+        onset = float(self.onsetEdit.text())
+        offset = float(self.offsetEdit.text())
+        length = float(self.trialLengthEdit.text())
+
+        valve = trial[1]
+        valence_map = trial[2]
+        conc_level = trial[3]
+
+        for p in range(len(valence_map)):
+            param = {'type': 'Simple',
+                     'fromDuty': False,
+                     'fromValues': True,
+                     'pulse_width': length,
+                     'pulse_delay': 0.0,
+                     'fromLength': False,
+                     'fromRepeats': True,
+                     'repeats': 0,
+                     'length': 0.0,
+                     'isClean': False,
+                     'isShatter': True,
+                     'shatter_frequency': 500.0,
+                     'shatter_duty': conc_level,
                      'onset': onset,
                      'offset': offset,
                      'lick_fraction': trial[3]}
