@@ -607,7 +607,8 @@ class ContCorrWidget(QtWidgets.QWidget, contCorrDesign.Ui_Form):
                      'pulse_times': [],
                      'target_duty': 0.5,
                      'invert': False,
-                     'reverse': False}
+                     'reverse': False,
+                     'lick_fraction': trial[10]}
 
             if straight_choice is 1:
                 o1_times = np.linspace(0, length, length * frequency, endpoint=False)
@@ -630,18 +631,18 @@ class ContCorrWidget(QtWidgets.QWidget, contCorrDesign.Ui_Form):
             # is this an odour 1 valve
             if p + 1 in o1_valve:
                 param['pulse_times'] = o1_times
-                param['target_duty'] = o1_contr[np.where(o1_valve == p + 1)[0]]
+                param['target_duty'] = o1_contr[int(np.where(o1_valve == p + 1)[0])]
 
             # is this an odour 2 valve
             if p + 1 in o2_valve:
                 param['pulse_times'] = o2_times
-                param['target_duty'] = o2_contr[np.where(o2_valve == p + 1)[0]]
+                param['target_duty'] = o2_contr[int(np.where(o2_valve == p + 1)[0])]
 
             # is this a blank valve
             if p + 1 in b_valve:
                 param['invert'] = True
-                param['pulse_times'] = comb[np.where(b_valve == p + 1)[0][0]]
-                param['target_duty'] = b_contr[np.where(b_valve == p + 1)[0]]
+                param['pulse_times'] = comb[int(np.where(b_valve == p + 1)[0][0])]
+                param['target_duty'] = b_contr[int(np.where(b_valve == p + 1)[0])]
                 # if correlated:
                 #     param['onset'] += anti_phase_offset * phase_choice
                 #     print(phase_choice)
