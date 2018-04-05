@@ -528,11 +528,13 @@ class ContCorrWidget(QtWidgets.QWidget, contCorrDesign.Ui_Form):
             else:
                 correlated = False if reward_sequence[t] == 1 else True
 
-            # choose rho
+            # choose rho - TODO for now set to 1 for corr, 0 for uncorr
             if correlated:
-                rho = np.round(np.random.uniform(0, 1.0), 1)
+                # rho = np.round(np.random.uniform(0, 1.0), 1)
+                rho = 1.0
             else:
-                rho = np.round(np.random.uniform(-1.0, 0.0), 1)
+                # rho = np.round(np.random.uniform(-1.0, 0.0), 1)
+                rho = 0.0
 
             simple_choice = np.random.uniform() > float(self.fractionSimpleTrialsEdit.text())
 
